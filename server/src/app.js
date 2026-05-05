@@ -15,6 +15,10 @@ app.use(cors({
     methods: ["GET", "POST"],
 }));
 
+app.get('/', (req, res) => {
+    res.send("Hello Shivam Your backend is running smoothly");
+});
+
 app.use('/api/user', userRouter);
 
 export default app;
