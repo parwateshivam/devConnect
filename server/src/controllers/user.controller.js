@@ -4,6 +4,7 @@ import { sendEmail } from "../services/nodemailer.service.js";
 import redisClient from "../config/redisClient.config.js";
 import jwt from "jsonwebtoken";
 import { envConfig } from "../config/env.config.js";
+import { generateOTP } from "../utils/generateOTP.js";
 
 export const handleRegister = async (req, res) => {
     try {
@@ -29,15 +30,23 @@ export const handleRegister = async (req, res) => {
 
         await user.save();
 
-        const otp = await sendEmail(email);
+        const otp = generateOTP();
 
         await redisClient.set(`${email}`, otp, {
             EX: 300
         });
 
+        await sendEmail(email, otp);
+
         res.status(201).json({
             message: "User registered successfully",
-            user: user
+            user: {
+                name: user.name,
+                email: user.email,
+                isEmailVerified: user.isEmailVerified,
+                skills: user.skills,
+                bio: user.bio
+            }
         });
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -111,11 +120,13 @@ export const handleEmailOtpRequest = async (req, res) => {
         return res.status(400).json({ message: "User not found" });
     }
 
-    const otp = await sendEmail(email);
+    const otp = generateOTP();
 
     await redisClient.set(`${email}`, otp, {
         EX: 300 // OTP expires in 5 minutes)
     });
+
+    await sendEmail(email, otp);
 
     return res.status(200).json({
         success: true,
@@ -154,7 +165,17 @@ export const handleLogin = async (req, res) => {
             { expiresIn: "1h" }
         );
 
-        res.status(200).json({ token, user });
+        res.status(200).json({
+            message: "Login successful",
+            user: {
+                name: user.name,
+                email: user.email,
+                isEmailVerified: user.isEmailVerified,
+                skills: user.skills,
+                bio: user.bio
+            },
+            token
+        });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }

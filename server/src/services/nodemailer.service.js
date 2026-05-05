@@ -1,10 +1,7 @@
 import nodemailer from 'nodemailer';
 import { envConfig } from '../config/env.config.js';
-import { generateOTP } from '../utils/generateOTP.js';
 
-export const sendEmail = async (email) => {
-
-    const otp = generateOTP();
+export const sendEmail = async (email, otp) => {
 
     const transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
