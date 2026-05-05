@@ -7,7 +7,9 @@ export const sendEmail = async (email) => {
     const otp = generateOTP();
 
     const transporter = nodemailer.createTransport({
-        service: 'gmail',
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
         auth: {
             user: envConfig.EMAIL,
             pass: envConfig.EMAIL_PASSWORD
@@ -54,7 +56,7 @@ export const sendEmail = async (email) => {
     try {
         await transporter.sendMail(mailOptions);
         console.log('Email sent successfully.');
-        return otp; // IMPORTANT: return OTP for verification logic
+        return otp;
     } catch (error) {
         console.error('Error sending email:', error);
         throw error;

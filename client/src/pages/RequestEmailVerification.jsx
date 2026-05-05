@@ -3,15 +3,13 @@ import CommonInput from '../components/CommonInput'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
+import { requestEmailOtp } from '../api/api'
 
 const RequestEmailVerification = () => {
-
     const [formData, setFormData] = useState({
         email: ""
     });
-
     const [loading, setLoading] = useState(false);
-
     const navigate = useNavigate();
 
     function validate() {
@@ -30,21 +28,22 @@ const RequestEmailVerification = () => {
 
     async function handleSubmit(e) {
         e.preventDefault();
-
         setLoading(true);
-
         const error = validate();
         if (error) {
             toast.error(error);
+            setLoading(false);
             return;
         }
-
-        const resp = await axios.post("http://localhost:3001/api/user/request-email-otp", formData);
-        toast.success("Email sent successfully ✅");
-
-        setLoading(false);
-
-        navigate("/verify-email");
+        try {
+            const resp = await requestEmailOtp("request-email-otp", formData);
+            toast.success("Email sent successfully ✅");
+            navigate("/verify-email");
+        } catch (err) {
+            toast.error(err?.response?.data?.error || "Something went wrong ❌");
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (

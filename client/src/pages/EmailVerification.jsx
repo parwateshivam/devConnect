@@ -3,6 +3,7 @@ import CommonInput from '../components/CommonInput'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
+import { verifyEmail } from '../api/api'
 
 const EmailVerification = () => {
     const [formData, setFormData] = useState({
@@ -23,17 +24,14 @@ const EmailVerification = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post(
-                "http://localhost:3001/api/user/verify-email",
-                formData
-            );
+            const res = await verifyEmail("verify-email", formData);
             toast.success("Email verified successfully ✅");
             navigate("/");
         } catch (err) {
             console.error(err);
             toast.error(err?.response?.data?.error || "Invalid OTP ❌");
         }
-    }
+    };
 
     return (
         <div className="container d-flex justify-content-center align-items-center vh-100">

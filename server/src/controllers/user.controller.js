@@ -32,7 +32,7 @@ export const handleRegister = async (req, res) => {
         const otp = await sendEmail(email);
 
         await redisClient.set(`${email}`, otp, {
-            EX: 300 // OTP expires in 5 minutes)
+            EX: 300
         });
 
         res.status(201).json({
