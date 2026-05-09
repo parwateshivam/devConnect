@@ -20,7 +20,6 @@ app.use(
             "https://dev-connect-alpha-six.vercel.app"
         ],
         methods: ["GET", "POST", "PUT", "DELETE"],
-        credentials: true
     })
 );
 
