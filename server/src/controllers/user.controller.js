@@ -5,51 +5,47 @@ import redisClient from "../config/redisClient.config.js";
 import jwt from "jsonwebtoken";
 import { envConfig } from "../config/env.config.js";
 import { generateOTP } from "../utils/generateOTP.js";
+import { registerUserService } from "../services/auth.service.js";
 
 export const handleRegister = async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
         if (!name || !email || !password) {
-            return res.status(400).json({ error: "All fields are required" });
+            return res.status(400).json({
+                success: false,
+                message: "All fields are required"
+            });
         }
 
-        const isUserExist = await USER.findOne({ email });
-
-        if (isUserExist) {
-            return res.status(400).json({ error: "User already exists" });
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const user = new USER({
-            name,
-            email,
-            password: hashedPassword
+        const user = await registerUserService({
+            name: name.trim(),
+            email: email.toLowerCase().trim(),
+            password
         });
 
-        await user.save();
+        const { password: _, ...safeUser } = user.toObject();
 
-        const otp = generateOTP();
-
-        await redisClient.set(`${email}`, otp, {
-            EX: 300
+        return res.status(201).json({
+            success: true,
+            message: "User registered. OTP sent to email.",
+            user: safeUser
         });
 
-        await sendEmail(email, otp);
-
-        res.status(201).json({
-            message: "User registered successfully",
-            user: {
-                name: user.name,
-                email: user.email,
-                isEmailVerified: user.isEmailVerified,
-                skills: user.skills,
-                bio: user.bio
-            }
-        });
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        console.error("Register Error:", error.message);
+
+        if (error.message === "User already exists") {
+            return res.status(400).json({
+                success: false,
+                message: error.message
+            });
+        }
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
+        });
     }
 };
 
