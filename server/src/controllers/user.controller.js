@@ -9,6 +9,7 @@ import { registerUserService } from "../services/auth.service.js";
 
 export const handleRegister = async (req, res) => {
     try {
+        console.log(req.body);
         const { name, email, password } = req.body;
 
         if (!name || !email || !password) {
