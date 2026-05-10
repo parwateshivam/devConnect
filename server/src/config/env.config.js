@@ -20,18 +20,6 @@ if (!JWT_SECRET) {
     process.exit(1);
 }
 
-const EMAIL = process.env.EMAIL;
-if (!EMAIL) {
-    console.error('Error: EMAIL environment variable is not set.');
-    process.exit(1);
-}
-
-const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
-if (!EMAIL_PASSWORD) {
-    console.error('Error: EMAIL_PASSWORD environment variable is not set.');
-    process.exit(1);
-}
-
 const REDIS_USERNAME = process.env.REDIS_USERNAME;
 if (!REDIS_USERNAME) {
     console.error('Error: REDIS_USERNAME environment variable is not set.');
@@ -66,8 +54,6 @@ export const envConfig = {
     PORT,
     MONGO_URI,
     JWT_SECRET,
-    EMAIL,
-    EMAIL_PASSWORD,
     REDIS_USERNAME,
     REDIS_PASSWORD,
     REDIS_HOST,
