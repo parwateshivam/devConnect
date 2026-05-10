@@ -38,15 +38,9 @@ const Login = () => {
 
         try {
             const res = await loginUser("login", form);
-
-            // ✅ Save token
             localStorage.setItem("token", res.data.token);
-
-            // ✅ Optional: Save user data
             localStorage.setItem("user", JSON.stringify(res.data.user));
-
             toast.success("Login successful ✅");
-
             navigate("/dashboard");
         } catch (err) {
             console.error(err);
@@ -102,13 +96,6 @@ const Login = () => {
                             Sign Up
                         </Link>
                     </p>
-
-                    <Link
-                        to="/request-for-email-verification"
-                        className="text-muted small text-decoration-none"
-                    >
-                        Verify Email
-                    </Link>
                 </div>
             </form>
         </div>

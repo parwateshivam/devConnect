@@ -9,9 +9,7 @@ const Dashboard = () => {
         setUser(user);
     }, []);
 
-    console.log(user);
-
-    return (
+    return ( 
         <>
             <Navbar />
             <div style={styles.container}>

@@ -40,7 +40,7 @@ const Signup = () => {
         try {
             await registerUser("register", formData);
             toast.success("Signup successful ✅");
-            navigate("/verify-email");
+            navigate("/");
         } catch (err) {
             console.error(err);
             toast.error(err?.response?.data?.error || "Signup failed ❌");

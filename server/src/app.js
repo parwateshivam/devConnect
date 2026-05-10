@@ -23,14 +23,6 @@ app.use(
     })
 );
 
-// Health Route
-app.get("/", (req, res) => {
-    res.status(200).json({
-        success: true,
-        message: "DevConnect Backend Running 🚀"
-    });
-});
-
 // API Routes
 app.use("/api/user", userRouter);
 
