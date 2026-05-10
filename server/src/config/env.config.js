@@ -20,43 +20,8 @@ if (!JWT_SECRET) {
     process.exit(1);
 }
 
-const REDIS_USERNAME = process.env.REDIS_USERNAME;
-if (!REDIS_USERNAME) {
-    console.error('Error: REDIS_USERNAME environment variable is not set.');
-    process.exit(1);
-}
-
-const REDIS_PASSWORD = process.env.REDIS_PASSWORD;
-if (!REDIS_PASSWORD) {
-    console.error('Error: REDIS_PASSWORD environment variable is not set.');
-    process.exit(1);
-}
-
-const REDIS_HOST = process.env.REDIS_HOST;
-if (!REDIS_HOST) {
-    console.error('Error: REDIS_HOST environment variable is not set.');
-    process.exit(1);
-}
-
-const REDIS_PORT = process.env.REDIS_PORT;
-if (!REDIS_PORT) {
-    console.error('Error: REDIS_PORT environment variable is not set.');
-    process.exit(1);
-}
-
-const RESEND_API_KEY = process.env.RESEND_API_KEY;
-if (!RESEND_API_KEY) {
-    console.error('Error: RESEND_API_KEY environment variable is not set.');
-    process.exit(1);
-}
-
 export const envConfig = {
     PORT,
     MONGO_URI,
     JWT_SECRET,
-    REDIS_USERNAME,
-    REDIS_PASSWORD,
-    REDIS_HOST,
-    REDIS_PORT,
-    RESEND_API_KEY
 };
