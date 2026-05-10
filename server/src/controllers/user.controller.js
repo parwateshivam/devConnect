@@ -1,15 +1,13 @@
 import USER from "../models/user.model.js";
 import bcrypt from "bcryptjs";
-import { sendEmail } from "../services/nodemailer.service.js";
+import { sendEmail } from "../services/email.service.js";
 import redisClient from "../config/redisClient.config.js";
 import jwt from "jsonwebtoken";
 import { envConfig } from "../config/env.config.js";
 import { generateOTP } from "../utils/generateOTP.js";
-import { registerUserService } from "../services/auth.service.js";
 
 export const handleRegister = async (req, res) => {
     try {
-        console.log(req.body);
         const { name, email, password } = req.body;
 
         if (!name || !email || !password) {
@@ -19,13 +17,42 @@ export const handleRegister = async (req, res) => {
             });
         }
 
-        const user = await registerUserService({
-            name: name.trim(),
-            email: email.toLowerCase().trim(),
-            password
+        const existingUser = await USER.findOne({ email });
+
+        if (existingUser) {
+            return res.status(400).json({
+                success: false,
+                message: "User already exists"
+            });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        const user = new USER({
+            name,
+            email,
+            password: hashedPassword
         });
 
-        const { password: _, ...safeUser } = user.toObject();
+        await user.save();
+
+        const otp = generateOTP();
+
+        await redisClient.set(`${email}`, otp, {
+            EX: 300
+        });
+
+        await sendEmail(email, otp);
+
+        const safeUser = {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            isEmailVerified: user.isEmailVerified,
+            skills: user.skills,
+            bio: user.bio
+        };
 
         return res.status(201).json({
             success: true,

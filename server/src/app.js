@@ -5,14 +5,14 @@ import userRouter from "./routes/user.routes.js";
 
 const app = express();
 
-// ✅ Connect Database
+// Connect Database
 connectDB();
 
-// ✅ Middleware
-app.use(express.json({ limit: "10mb" }));
+// Middleware
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ✅ CORS Configuration
+// CORS Configuration
 app.use(
     cors({
         origin: [
@@ -23,7 +23,7 @@ app.use(
     })
 );
 
-// ✅ Health Route
+// Health Route
 app.get("/", (req, res) => {
     res.status(200).json({
         success: true,
@@ -31,25 +31,7 @@ app.get("/", (req, res) => {
     });
 });
 
-// ✅ API Routes
+// API Routes
 app.use("/api/user", userRouter);
-
-// ✅ 404 Handler
-app.use((req, res) => {
-    res.status(404).json({
-        success: false,
-        message: "Route not found"
-    });
-});
-
-// ✅ Global Error Handler
-app.use((err, req, res, next) => {
-    console.error("Server Error:", err);
-
-    res.status(500).json({
-        success: false,
-        message: "Internal Server Error"
-    });
-});
 
 export default app;

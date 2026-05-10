@@ -56,6 +56,12 @@ if (!REDIS_PORT) {
     process.exit(1);
 }
 
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
+if (!RESEND_API_KEY) {
+    console.error('Error: RESEND_API_KEY environment variable is not set.');
+    process.exit(1);
+}
+
 export const envConfig = {
     PORT,
     MONGO_URI,
@@ -65,5 +71,6 @@ export const envConfig = {
     REDIS_USERNAME,
     REDIS_PASSWORD,
     REDIS_HOST,
-    REDIS_PORT
+    REDIS_PORT,
+    RESEND_API_KEY
 };
