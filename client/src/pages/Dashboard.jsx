@@ -9,7 +9,7 @@ const Dashboard = () => {
         setUser(user);
     }, []);
 
-    return ( 
+    return (
         <>
             <Navbar />
             <div style={styles.container}>
@@ -21,13 +21,6 @@ const Dashboard = () => {
                         <p>This is a sample post...</p>
                     </div>
 
-                </div>
-
-                <div style={styles.sidebar}>
-                    <h3>Profile</h3>
-                    <p>Name: {user.name}</p>
-                    <p>Email: {user.email} {user.isVerified && <span style={{ color: "green" }}>(Verified)</span>}</p>
-                    <p>Skills</p>
                 </div>
             </div>
         </>

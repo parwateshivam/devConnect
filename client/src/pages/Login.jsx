@@ -4,6 +4,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../api/api";
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/slices/userSlice";
 
 const Login = () => {
     const [form, setForm] = useState({
@@ -13,6 +15,8 @@ const Login = () => {
 
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+
+    const dispatch = useDispatch();
 
     function handleChange(e) {
         const { name, value } = e.target;
@@ -39,7 +43,8 @@ const Login = () => {
         try {
             const res = await loginUser("login", form);
             localStorage.setItem("token", res.data.token);
-            localStorage.setItem("user", JSON.stringify(res.data.user));
+            console.log(res.data);
+            dispatch(setUser(res.data));
             toast.success("Login successful ✅");
             navigate("/dashboard");
         } catch (err) {
