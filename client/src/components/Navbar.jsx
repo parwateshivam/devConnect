@@ -1,18 +1,16 @@
 import { useState } from "react";
 import profileImage from "../assets/profileImg.png";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { clearUser } from "../redux/slices/userSlice";
 
 const Navbar = () => {
     const [profileModal, setProfileModal] = useState(false);
-
-    // correct useSelector usage
+    const dispatch = useDispatch();
     const user = useSelector((state) => state.user.user);
-
-    console.log(user);
 
     const handleLogoutClick = () => {
         localStorage.removeItem("token");
-        localStorage.removeItem("user");
+        dispatch(clearUser());
         window.location.href = "/";
     };
 
