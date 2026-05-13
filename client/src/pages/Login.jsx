@@ -43,8 +43,7 @@ const Login = () => {
         try {
             const res = await loginUser("login", form);
             localStorage.setItem("token", res.data.token);
-            console.log(res.data);
-            dispatch(setUser(res.data));
+            dispatch(setUser(res.data.user));
             toast.success("Login successful ✅");
             navigate("/dashboard");
         } catch (err) {

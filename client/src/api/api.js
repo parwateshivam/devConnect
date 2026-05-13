@@ -21,3 +21,20 @@ export const loginUser = async (endpoint, data) => {
         throw error;
     }
 };
+
+export const uploadProfileImg = async (endpoint, data, token) => {
+    try {
+        const resp = await axios.post(
+            `${host}/${endpoint}`,
+            data
+            , {
+                headers: {
+                    Authorization: `${token}`
+                }
+            }
+        );
+        return resp;
+    } catch (error) {
+        throw error;
+    }
+};

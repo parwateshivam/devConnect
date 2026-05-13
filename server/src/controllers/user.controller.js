@@ -2,6 +2,7 @@ import USER from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { envConfig } from "../config/env.config.js";
+import cloudinary from "../services/cloudinary.service.js";
 
 export const handleRegister = async (req, res) => {
     try {
@@ -24,6 +25,7 @@ export const handleRegister = async (req, res) => {
         }
 
         const salt = await bcrypt.genSalt(10);
+
         const hashedPassword = await bcrypt.hash(password, salt);
 
         const user = new USER({
@@ -40,8 +42,6 @@ export const handleRegister = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Register Error:", error.message);
-
         if (error.message === "User already exists") {
             return res.status(400).json({
                 success: false,
@@ -88,6 +88,7 @@ export const handleLogin = async (req, res) => {
             user: {
                 name: user.name,
                 email: user.email,
+                profileImg: user.profileImg,
                 skills: user.skills,
                 bio: user.bio
             },
@@ -98,3 +99,49 @@ export const handleLogin = async (req, res) => {
     }
 };
 
+export const handleUploadProfileImg = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: "No file uploaded",
+            });
+        }
+
+        // Convert buffer to base64
+        const fileUri = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
+
+        // Upload to cloudinary
+        const result = await cloudinary.uploader.upload(fileUri, {
+            folder: "profile_images",
+        });
+
+        // Update user
+        const updatedUser = await USER.findByIdAndUpdate(
+            req.user._id,
+            {
+                profileImg: result.secure_url,
+            },
+            {
+                new: true,
+            }
+        );
+
+        res.status(200).json({
+            success: true,
+            message: "Profile image uploaded successfully",
+            user: {
+                name: updatedUser.name,
+                email: updatedUser.email,
+                profileImg: updatedUser.profileImg,
+                skills: updatedUser.skills,
+                bio: updatedUser.bio
+            },
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Image upload failed",
+        });
+    }
+};

@@ -1,27 +1,18 @@
 import dotenv from 'dotenv';
-
 dotenv.config();
 
 const PORT = process.env.PORT;
-if (!PORT) {
-    console.error('Error: PORT environment variable is not set.');
-    process.exit(1);
-}
-
 const MONGO_URI = process.env.MONGO_URI;
-if (!MONGO_URI) {
-    console.error('Error: MONGO_URI environment variable is not set.');
-    process.exit(1);
-}
-
 const JWT_SECRET = process.env.JWT_SECRET;
-if (!JWT_SECRET) {
-    console.error('Error: JWT_SECRET environment variable is not set.');
-    process.exit(1);
-}
+const CLOUDINARY_NAME = process.env.CLOUDINARY_CLOUD_NAME;
+const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY;
+const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET;
 
 export const envConfig = {
     PORT,
     MONGO_URI,
     JWT_SECRET,
+    CLOUDINARY_NAME,
+    CLOUDINARY_API_KEY,
+    CLOUDINARY_API_SECRET
 };
