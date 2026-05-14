@@ -119,12 +119,8 @@ export const handleUploadProfileImg = async (req, res) => {
         // Update user
         const updatedUser = await USER.findByIdAndUpdate(
             req.user._id,
-            {
-                profileImg: result.secure_url,
-            },
-            {
-                new: true,
-            }
+            { profileImg: result.secure_url },
+            { new: true }
         );
 
         res.status(200).json({
@@ -144,4 +140,4 @@ export const handleUploadProfileImg = async (req, res) => {
             message: "Image upload failed",
         });
     }
-};
+}; 

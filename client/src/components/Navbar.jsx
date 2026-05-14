@@ -1,5 +1,5 @@
 import { useState } from "react";
-import profileImage from "../assets/profileImg.png";
+import profile from "../assets/profileImg.png";
 import { useDispatch, useSelector } from "react-redux";
 import { clearUser, setUser } from "../redux/slices/userSlice";
 import { uploadProfileImg } from "../api/api";
@@ -71,7 +71,7 @@ const Navbar = () => {
 
                         <img
                             style={styles.profileImage}
-                            src={user?.profileImg || profileImage}
+                            src={user?.profileImg || profile}
                             alt="profile"
                         />
 
@@ -141,7 +141,7 @@ const Navbar = () => {
                                                         src={
                                                             image
                                                                 ? URL.createObjectURL(image)
-                                                                : user?.profileImg || profileImage
+                                                                : user?.profileImg || profile
                                                         }
                                                         alt="profile"
                                                         style={styles.largeProfileImage}
