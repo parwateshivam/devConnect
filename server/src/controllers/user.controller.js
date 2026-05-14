@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { envConfig } from "../config/env.config.js";
 import cloudinary from "../services/cloudinary.service.js";
+import streamifier from "streamifier";
 
 export const handleRegister = async (req, res) => {
     try {
@@ -101,6 +102,7 @@ export const handleLogin = async (req, res) => {
 
 export const handleUploadProfileImg = async (req, res) => {
     try {
+        // Check file
         if (!req.file) {
             return res.status(400).json({
                 success: false,
@@ -108,21 +110,45 @@ export const handleUploadProfileImg = async (req, res) => {
             });
         }
 
-        // Convert buffer to base64
-        const fileUri = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
+        // Upload function
+        const streamUpload = () => {
+            return new Promise((resolve, reject) => {
 
-        // Upload to cloudinary
-        const result = await cloudinary.uploader.upload(fileUri, {
-            folder: "profile_images",
-        });
+                const stream = cloudinary.uploader.upload_stream(
+                    {
+                        folder: "profile_images",
+                    },
+                    (error, result) => {
 
-        // Update user
+                        if (error) {
+                            reject(error);
+                        } else {
+                            resolve(result);
+                        }
+                    }
+                );
+
+                streamifier
+                    .createReadStream(req.file.buffer)
+                    .pipe(stream);
+            });
+        };
+
+        // Upload image to cloudinary
+        const result = await streamUpload();
+
+        // Update user in database
         const updatedUser = await USER.findByIdAndUpdate(
             req.user._id,
-            { profileImg: result.secure_url },
-            { new: true }
+            {
+                profileImg: result.secure_url,
+            },
+            {
+                new: true,
+            }
         );
 
+        // Response
         res.status(200).json({
             success: true,
             message: "Profile image uploaded successfully",
@@ -131,13 +157,17 @@ export const handleUploadProfileImg = async (req, res) => {
                 email: updatedUser.email,
                 profileImg: updatedUser.profileImg,
                 skills: updatedUser.skills,
-                bio: updatedUser.bio
+                bio: updatedUser.bio,
             },
         });
+
     } catch (error) {
+
+        console.log("UPLOAD ERROR:", error);
+
         res.status(500).json({
             success: false,
-            message: "Image upload failed",
+            message: error.message || "Image upload failed",
         });
     }
-}; 
+};
