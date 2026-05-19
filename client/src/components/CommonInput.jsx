@@ -14,7 +14,7 @@ const CommonInput = ({
             placeholder={placeholder}
             name={name}
             type={type}
-            value={value}
+            value={type !== "file" ? value : undefined}
             onChange={onChange}
             required={required}
         />

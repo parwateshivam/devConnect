@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { envConfig } from "../config/env.config.js";
 import cloudinary from "../services/cloudinary.service.js";
 import streamifier from "streamifier";
+import { sendEmail } from "../services/email.service.js";
 
 export const handleRegister = async (req, res) => {
     try {
@@ -83,6 +84,8 @@ export const handleLogin = async (req, res) => {
             envConfig.JWT_SECRET,
             { expiresIn: "1h" }
         );
+
+        // await sendEmail(email, user.name);
 
         res.status(200).json({
             message: "Login successful",
