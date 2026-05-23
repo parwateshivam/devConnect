@@ -55,3 +55,28 @@ export const handleCreatePost = async (req, res) => {
         console.log(error);
     }
 }
+
+export const handleGetAllPosts = async (req, res) => {
+    try {
+        const posts = await POST.find(
+            { createdBy: { $ne: req.user.id } }
+        )
+            .select("title description postImg createdAt createdBy")
+            .populate({
+                path: "createdBy",
+                select: "name profileImg"
+            })
+            .sort({ createdAt: -1 });
+
+        return res.status(200).json({
+            success: true,
+            posts,
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+        });
+    }
+};

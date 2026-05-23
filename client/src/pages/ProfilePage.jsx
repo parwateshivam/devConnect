@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import profile from "../assets/profileImg.png";
 import { uploadProfileImg } from "../api/api";
 import { setUser } from "../redux/slices/userSlice";
@@ -11,6 +11,18 @@ const ProfilePage = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const user = useSelector((state) => state.user.user);
+    // const [posts, setPosts] = useState([]);
+
+    // useEffect(() => {
+    //     const fetchPosts = async () => {
+    //         try {
+
+    //         } catch (error) {
+    //             console.error(error);
+    //         }
+    //     }
+    //     fetchPosts();
+    // }, []);
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -98,6 +110,7 @@ const ProfilePage = () => {
                 {/* right side */}
                 <div style={styles.rightSection}>
                     <h3>User Details</h3>
+                    <hr />
                     <div style={styles.infoBox}>
                         <p>
                             <strong>Name :</strong> {user?.name}
@@ -107,8 +120,18 @@ const ProfilePage = () => {
                             <strong>Email :</strong> {user?.email}
                         </p>
                     </div>
+                    <hr />
+                    <Link to="/create-post">
+                        <button className="btn btn-primary w-100">
+                            Create Post
+                        </button>
+                    </Link>
                 </div>
             </div>
+
+            {
+
+            }
 
         </div>
     );
@@ -176,7 +199,6 @@ const styles = {
         marginTop: "20px",
         display: "flex",
         flexDirection: "column",
-        gap: "15px",
         fontSize: "18px"
     }
 };

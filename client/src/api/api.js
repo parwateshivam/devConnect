@@ -56,3 +56,19 @@ export const createPost = async (endpoint, data, token) => {
         throw error;
     }
 }
+
+export const getAllPosts = async (endpoint, token) => {
+    try {
+        const resp = await axios.get(
+            `${host}/post/${endpoint}`,
+            {
+                headers: {
+                    Authorization: `${token}`
+                }
+            }
+        );
+        return resp;
+    } catch (error) {
+        throw error;
+    }
+}

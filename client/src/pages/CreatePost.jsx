@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import CommonInput from '../components/CommonInput'
 import { createPost } from '../api/api'
+import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
 
 const CreatePost = () => {
 
@@ -9,6 +11,7 @@ const CreatePost = () => {
         description: "",
         image: null
     })
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value, files, type } = e.target
@@ -35,6 +38,7 @@ const CreatePost = () => {
                     image: null
                 })
                 toast.success(res.data.message)
+                navigate("/dashboard");
             }
         } catch (error) {
             toast.error(error?.response?.data?.message || "Failed to create post");
