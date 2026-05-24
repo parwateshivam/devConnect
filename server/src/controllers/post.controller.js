@@ -8,7 +8,15 @@ export const handleCreatePost = async (req, res) => {
         const { title, description } = req.body;
 
         if (!title || !description) {
-            return res.status(400).json({ message: "All fields are required" });
+            return res.status(400).json({
+                message: "All fields are required"
+            });
+        }
+
+        if (!req.file) {
+            return res.status(400).json({
+                message: "Post image is required"
+            });
         }
 
         const streamUpload = () => {
@@ -25,7 +33,10 @@ export const handleCreatePost = async (req, res) => {
                         }
                     }
                 );
-                streamifier.createReadStream(req.file.buffer).pipe(stream);
+
+                streamifier
+                    .createReadStream(req.file.buffer)
+                    .pipe(stream);
             });
         };
 
@@ -42,19 +53,22 @@ export const handleCreatePost = async (req, res) => {
 
         await post.save();
 
-        if (!post) {
-            return res.status(400).json({ message: "Post not created" });
-        }
-
         await USER.findByIdAndUpdate(user._id, {
             $push: { posts: post._id },
         });
 
-        return res.status(200).json({ message: "Post created successfully" });
+        return res.status(200).json({
+            message: "Post created successfully"
+        });
+
     } catch (error) {
         console.log(error);
+
+        return res.status(500).json({
+            message: "Internal Server Error"
+        });
     }
-}
+};
 
 export const handleGetAllPosts = async (req, res) => {
     try {
