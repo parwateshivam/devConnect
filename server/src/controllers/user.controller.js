@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import { envConfig } from "../config/env.config.js";
 import cloudinary from "../services/cloudinary.service.js";
 import streamifier from "streamifier";
-import { sendEmail } from "../services/email.service.js";
+import { transporter } from "../services/email.service.js";
 
 export const handleRegister = async (req, res) => {
     try {
@@ -37,6 +37,15 @@ export const handleRegister = async (req, res) => {
         });
 
         await user.save();
+
+        const emaiOptions = {
+            from: envConfig.SENDER_EMAIL,
+            to: email,
+            subject: "Registration successful",
+            text: `Hello ${name},\n\nYou have successfully registered.`
+        };
+
+        await transporter.sendMail(emaiOptions);
 
         return res.status(201).json({
             success: true,
