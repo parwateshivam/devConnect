@@ -38,6 +38,11 @@ export const handleRegister = async (req, res) => {
 
         await user.save();
 
+        return res.status(201).json({
+            success: true,
+            message: "User registered successfully.",
+        });
+
         const emaiOptions = {
             from: envConfig.SENDER_EMAIL,
             to: email,
@@ -46,12 +51,6 @@ export const handleRegister = async (req, res) => {
         };
 
         await transporter.sendMail(emaiOptions);
-
-        return res.status(201).json({
-            success: true,
-            message: "User registered successfully.",
-        });
-
     } catch (error) {
         if (error.message === "User already exists") {
             return res.status(400).json({
