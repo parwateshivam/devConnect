@@ -87,7 +87,28 @@ export const handleGetAllPosts = async (req, res) => {
             posts,
         });
     } catch (error) {
-        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+        });
+    }
+};
+
+export const handleGetUsersPosts = async (req, res) => {
+    try {
+        const posts = await POST.find({ createdBy: req.user.id })
+            .select("title description postImg createdAt createdBy")
+            .populate({
+                path: "createdBy",
+                select: "name profileImg"
+            })
+            .sort({ createdAt: -1 });
+
+        return res.status(200).json({
+            success: true,
+            posts,
+        });
+    } catch (error) {
         return res.status(500).json({
             success: false,
             message: "Internal Server Error",

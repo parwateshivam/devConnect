@@ -3,6 +3,7 @@ import CommonInput from '../components/CommonInput'
 import { createPost } from '../api/api'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
+import Loader from '../components/Loader'
 
 const CreatePost = () => {
 
@@ -12,6 +13,7 @@ const CreatePost = () => {
         image: null
     })
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
         const { name, value, files, type } = e.target
@@ -23,7 +25,7 @@ const CreatePost = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        console.log(formData)
+        setLoading(true);
         const data = new FormData()
         data.append("title", formData.title)
         data.append("description", formData.description)
@@ -39,6 +41,7 @@ const CreatePost = () => {
                 })
                 toast.success(res.data.message)
                 navigate("/dashboard");
+                setLoading(false);
             }
         } catch (error) {
             toast.error(error?.response?.data?.message || "Failed to create post");
@@ -80,7 +83,14 @@ const CreatePost = () => {
                     />
 
                     <button className='btn btn-primary' type="submit">
-                        Create Post
+                        {
+                            loading && (
+                                <Loader />
+                            )
+                        }
+                        {
+                            loading ? "Creating Post..." : "Create Post"
+                        }
                     </button>
                 </form>
             </div>

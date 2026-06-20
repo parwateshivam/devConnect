@@ -3,26 +3,29 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import profile from "../assets/profileImg.png";
-import { uploadProfileImg } from "../api/api";
+import { getUsersPosts, uploadProfileImg, } from "../api/api";
 import { setUser } from "../redux/slices/userSlice";
+import PostCard from "../components/PostCard";
 
 const ProfilePage = () => {
     const [image, setImage] = useState(null);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const user = useSelector((state) => state.user.user);
-    // const [posts, setPosts] = useState([]);
+    const [posts, setPosts] = useState([]);
 
-    // useEffect(() => {
-    //     const fetchPosts = async () => {
-    //         try {
-
-    //         } catch (error) {
-    //             console.error(error);
-    //         }
-    //     }
-    //     fetchPosts();
-    // }, []);
+    useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const resp = await getUsersPosts("get-users-posts", token);
+                setPosts(resp.data.posts || []);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        fetchPosts();
+    }, []);
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -57,150 +60,172 @@ const ProfilePage = () => {
     };
 
     return (
-        <div style={styles.container}>
-
-            {/* top navbar */}
-            <div style={styles.topBar}>
+        <div
+            className="container-fluid py-4"
+        >
+            {/* Back Button */}
+            <div className="container mb-4">
                 <button
-                    className="btn btn-dark"
+                    className="btn btn-outline-primary"
                     onClick={() => navigate(-1)}
                 >
-                    Back
+                    ← Back
                 </button>
-
-                <h2 style={{ margin: 0 }}>
-                    My Profile
-                </h2>
             </div>
 
-            {/* profile section */}
-            <div style={styles.profileSection}>
-                {/* left side */}
-                <div style={styles.leftSection}>
-                    <img
-                        src={
-                            image
-                                ? URL.createObjectURL(image)
-                                : user?.profileImg || profile
-                        }
-                        alt="profile"
-                        style={styles.profileImage}
-                    />
+            <div className="container">
 
-                    <form
-                        onSubmit={handleProfileSubmit}
-                        style={styles.form}
-                    >
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleFileChange}
-                            className="form-control"
+                {/* Profile Card */}
+                <div className="card border-0 shadow overflow-hidden mb-4">
+                    {/* Cover */}
+                    <div
+                        style={{
+                            height: "200px",
+                            background:
+                                "linear-gradient(135deg,#0d6efd,#6610f2)"
+                        }}
+                    ></div>
+
+                    <div className="card-body text-center position-relative">
+
+                        {/* Profile Image */}
+                        <img
+                            src={
+                                image
+                                    ? URL.createObjectURL(image)
+                                    : user?.profileImg || profile
+                            }
+                            alt="profile"
+                            className="rounded-circle border border-4 border-white shadow"
+                            style={{
+                                width: "160px",
+                                height: "160px",
+                                objectFit: "cover",
+                                marginTop: "-100px"
+                            }}
                         />
 
-                        <button
-                            type="submit"
-                            className="btn btn-primary w-100"
-                        >
-                            Upload Image
-                        </button>
-                    </form>
-                </div>
+                        <h2 className="fw-bold mt-3">
+                            {user?.name}
+                        </h2>
 
-                {/* right side */}
-                <div style={styles.rightSection}>
-                    <h3>User Details</h3>
-                    <hr />
-                    <div style={styles.infoBox}>
-                        <p>
-                            <strong>Name :</strong> {user?.name}
+                        <p className="text-secondary mb-4">
+                            {user?.email}
                         </p>
 
-                        <p>
-                            <strong>Email :</strong> {user?.email}
-                        </p>
+                        {/* Stats */}
+                        <div className="row text-center mb-4">
+                            <div className="col">
+                                <h4 className="fw-bold">
+                                    {posts.length}
+                                </h4>
+                                <small className="text-muted">
+                                    Posts
+                                </small>
+                            </div>
+
+                            <div className="col">
+                                <h4 className="fw-bold">
+                                    0
+                                </h4>
+                                <small className="text-muted">
+                                    Followers
+                                </small>
+                            </div>
+
+                            <div className="col">
+                                <h4 className="fw-bold">
+                                    0
+                                </h4>
+                                <small className="text-muted">
+                                    Following
+                                </small>
+                            </div>
+                        </div>
+
+                        {/* Create Post */}
+                        <Link to="/create-post">
+                            <button className="btn btn-primary px-5 rounded-pill">
+                                + Create Post
+                            </button>
+                        </Link>
                     </div>
-                    <hr />
-                    <Link to="/create-post">
-                        <button className="btn btn-primary w-100">
-                            Create Post
-                        </button>
-                    </Link>
                 </div>
+
+                {/* Upload Image Card */}
+                <div className="card border-0 shadow mb-5">
+                    <div className="card-body">
+
+                        <h4 className="fw-bold mb-4">
+                            Change Profile Picture
+                        </h4>
+
+                        <form
+                            onSubmit={handleProfileSubmit}
+                            className="row g-3"
+                        >
+                            <div className="col-md-9">
+                                <input
+                                    type="file"
+                                    className="form-control"
+                                    accept="image/*"
+                                    onChange={handleFileChange}
+                                />
+                            </div>
+
+                            <div className="col-md-3">
+                                <button
+                                    className="btn btn-primary w-100"
+                                    type="submit"
+                                >
+                                    Upload
+                                </button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+
+                {/* Posts */}
+                <div className="mb-4">
+                    <h2 className="fw-bold mb-4">
+                        My Posts
+                    </h2>
+
+                    {
+                        posts.length === 0 ? (
+                            <div className="card border-0 shadow text-center p-5">
+                                <h4 className="text-muted">
+                                    No Posts Yet
+                                </h4>
+
+                                <Link
+                                    to="/create-post"
+                                    className="btn btn-primary mt-3"
+                                >
+                                    Create First Post
+                                </Link>
+                            </div>
+                        ) : (
+                            <div className="row">
+                                {
+                                    posts.map((post) => (
+                                        <div
+                                            className="col-lg-6 mb-4"
+                                            key={post._id}
+                                        >
+                                            <PostCard post={post} />
+                                        </div>
+                                    ))
+                                }
+                            </div>
+                        )
+                    }
+                </div>
+
             </div>
-
-            {
-
-            }
-
         </div>
     );
-};
-
-const styles = {
-    container: {
-        minHeight: "100vh",
-        background: "#f5f5f5",
-        padding: "40px"
-    },
-
-    topBar: {
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: "40px"
-    },
-
-    profileSection: {
-        display: "flex",
-        gap: "40px",
-        flexWrap: "wrap",
-        alignItems: "flex-start"
-    },
-
-    leftSection: {
-        flex: "1",
-        minWidth: "300px",
-        background: "#fff",
-        padding: "30px",
-        borderRadius: "15px",
-        boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: "20px"
-    },
-
-    rightSection: {
-        flex: "1",
-        minWidth: "300px",
-        background: "#fff",
-        padding: "30px",
-        borderRadius: "15px",
-        boxShadow: "0 2px 10px rgba(0,0,0,0.1)"
-    },
-
-    profileImage: {
-        width: "180px",
-        height: "180px",
-        borderRadius: "50%",
-        objectFit: "cover",
-        border: "5px solid #0d6efd"
-    },
-
-    form: {
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        gap: "15px"
-    },
-
-    infoBox: {
-        marginTop: "20px",
-        display: "flex",
-        flexDirection: "column",
-        fontSize: "18px"
-    }
 };
 
 export default ProfilePage;

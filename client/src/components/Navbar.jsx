@@ -3,10 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { clearUser } from "../redux/slices/userSlice";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { ThemeContext } from "../context/ThemeContext";
+import { SunIcon, MoonIcon } from "lucide-react";
 
 const Navbar = () => {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user.user);
+    const { theme, setTheme } = useContext(ThemeContext);
 
     const handleLogoutClick = () => {
         localStorage.removeItem("token");
@@ -16,76 +20,59 @@ const Navbar = () => {
     };
 
     return (
-        <>
-            {/* navbar */}
-            <div style={styles.nav}>
+        <nav className="navbar navbar-expand-lg shadow-sm px-4 py-3">
+            <div className="container-fluid">
+                {/* Logo */}
+                <Link
+                    to="/"
+                    className="navbar-brand fw-bold fs-3 text-primary"
+                >
+                    DevConnect
+                </Link>
 
-                {/* logo */}
-                <div>
-                    <h2>DevConnect</h2>
-                </div>
-
-                {/* right section */}
+                {/* Right Section */}
                 <div className="d-flex align-items-center gap-3">
-
-                    {/* profile image */}
-                    <Link
-                        to="/profile"
-                        style={{ textDecoration: "none" }}
+                    {/* Theme Toggle */}
+                    <button
+                        className="btn btn-outline-primary rounded-circle d-flex justify-content-center align-items-center"
+                        style={{ width: "45px", height: "45px" }}
+                        onClick={() =>
+                            setTheme(theme === "light" ? "dark" : "light")
+                        }
                     >
-                        <div style={styles.profileContainer}>
+                        {theme === "light" ? (
+                            <SunIcon size={20} />
+                        ) : (
+                            <MoonIcon size={20} />
+                        )}
+                    </button>
 
-                            <img
-                                style={styles.profileImage}
-                                src={user?.profileImg || profile}
-                                alt="profile"
-                            />
-
-                        </div>
+                    {/* Profile Image */}
+                    <Link to="/profile" className="text-decoration-none">
+                        <img
+                            src={user?.profileImg || profile}
+                            alt="profile"
+                            className="rounded-circle border border-2 border-primary shadow-sm"
+                            style={{
+                                width: "50px",
+                                height: "50px",
+                                objectFit: "cover",
+                                cursor: "pointer"
+                            }}
+                        />
                     </Link>
 
-                    {/* logout button */}
+                    {/* Logout Button */}
                     <button
                         onClick={handleLogoutClick}
-                        className="btn btn-primary"
+                        className="btn btn-danger px-4 fw-semibold"
                     >
                         Logout
                     </button>
-
                 </div>
-
             </div>
-        </>
+        </nav>
     );
-};
-
-const styles = {
-    nav: {
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        padding: "12px 24px",
-        background: "#222",
-        color: "#fff",
-        boxShadow: "0 2px 10px rgba(0,0,0,0.2)"
-    },
-
-    profileContainer: {
-        cursor: "pointer",
-        background: "#00ff00",
-        padding: "2px",
-        borderRadius: "50%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center"
-    },
-
-    profileImage: {
-        width: "45px",
-        height: "45px",
-        borderRadius: "50%",
-        objectFit: "cover"
-    }
 };
 
 export default Navbar;

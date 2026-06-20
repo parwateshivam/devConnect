@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../api/api";
 import { useDispatch } from "react-redux";
 import { setUser } from "../redux/slices/userSlice";
+import Loader from "../components/Loader";
 
 const Login = () => {
     const [form, setForm] = useState({
@@ -90,7 +91,14 @@ const Login = () => {
                     type="submit"
                     disabled={loading}
                 >
-                    {loading ? "Logging in..." : "Login"}
+                    {
+                        loading && (
+                            <Loader />
+                        )
+                    }
+                    {
+                        loading ? "Logging in..." : "Login"
+                    }
                 </button>
 
                 <div className="mt-3 text-center">

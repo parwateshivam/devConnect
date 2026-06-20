@@ -72,3 +72,19 @@ export const getAllPosts = async (endpoint, token) => {
         throw error;
     }
 }
+
+export const getUsersPosts = async (endpoint, token) => {
+    try {
+        const resp = await axios.get(
+            `${host}/post/${endpoint}`,
+            {
+                headers: {
+                    Authorization: `${token}`
+                }
+            }
+        );
+        return resp;
+    } catch (error) {
+        throw error;
+    }
+}
